@@ -112,8 +112,20 @@ describe("Model: SweetShop, Sweet delete & search", () => {
       quantity: 12,
     });
   });
-
+  
   // delete
+  it("deleteSweet: removes and returns the sweet by id", () => {
+    const sweet = shop.addSweet({
+      name: "Barfi",
+      category: "Indian",
+      price: 15,
+      quantity: 12,
+    });
+    const removed = shop.deleteSweet(sweet.id);
+    expect(removed).toMatchObject({ id: sweet.id, name: "Barfi" });
+    expect(shop.viewSweets().find((s) => s.id === sweet.id)).toBeUndefined();
+  });
+
   it("deleteSweetsByCategory: removes sweets of the given category", () => {
     const removedSweets = shop.deleteSweetsByCategory("Indian");
 
