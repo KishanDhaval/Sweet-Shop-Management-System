@@ -54,6 +54,22 @@ class SweetShop {
     this.sweets = this.sweets.filter(s => s.category !== category);
     return matchedSweets; 
   }
+
+  searchByName(name) {
+    return this.sweets.filter(s =>
+      s.name.toLowerCase().includes(name.toLowerCase())
+    );
+  }
+
+  searchByCategory(cat) {
+    return this.sweets.filter(s =>
+      s.category.toLowerCase() === cat.toLowerCase()
+    );
+  }
+
+  searchByPriceRange(min, max) {
+    return this.sweets.filter(s => s.price >= min && s.price <= max);
+  }
 }
 
 module.exports = SweetShop;
