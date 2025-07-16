@@ -138,6 +138,7 @@ describe("Model: SweetShop, Sweet delete & search", () => {
     });
   });
 
+  // delete
   it("deleteSweetsByCategory: removes sweets of the given category", () => {
     const removedSweets = shop.deleteSweetsByCategory("Indian");
 
@@ -161,6 +162,7 @@ describe("Model: SweetShop, Sweet delete & search", () => {
     expect(() => shop.deleteSweet(999)).toThrow("Sweet with ID 999 not found");
   });
 
+  // search
   it("searchByName: finds sweets", () => {
     const res1 = shop.searchByName("lado");
     expect(res1).toHaveLength(1);
@@ -192,5 +194,37 @@ describe("Model: SweetShop, Sweet delete & search", () => {
 
   it("searchByPriceRange: handles no matches", () => {
     expect(shop.searchByPriceRange(100, 200)).toEqual([]);
+  });
+
+  // purchase
+  it("purchaseSweet: decreases quantity correctly", () => {
+    const updated = shop.purchaseSweet(1, 3);
+    expect(updated.quantity).toBe(7);
+    expect(shop.viewSweets().find((s) => s.id === 1).quantity).toBe(7);
+  });
+
+  it("purchaseSweet: throws on insufficient stock", () => {
+    expect(() => shop.purchaseSweet(2, 10)).toThrow(
+      "Insufficient stock for ID 2"
+    );
+  });
+
+  it("purchaseSweet: throws on unknown id", () => {
+    expect(() => shop.purchaseSweet(999, 1)).toThrow(
+      "Sweet with ID 999 not found"
+    );
+  });
+
+  // restock
+  it("restockSweet: increases quantity correctly", () => {
+    const updated = shop.restockSweet(2, 7);
+    expect(updated.quantity).toBe(12);
+    expect(shop.viewSweets().find((s) => s.id === 2).quantity).toBe(12);
+  });
+
+  it("restockSweet: throws on unknown id", () => {
+    expect(() => shop.restockSweet(999, 5)).toThrow(
+      "Sweet with ID 999 not found"
+    );
   });
 });
