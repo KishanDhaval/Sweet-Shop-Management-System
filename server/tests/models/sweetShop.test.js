@@ -1,5 +1,6 @@
 const SweetShop = require("../../src/models/sweetShop");
 
+// Test cases for add function
 describe("Model: SweetShop, Sweet add", () => {
   let shop;
 
@@ -100,6 +101,7 @@ describe("Model: SweetShop, Sweet add", () => {
   });
 });
 
+// Test cases for delete function
 describe("Model: SweetShop, Sweet delete", () => {
   let shop;
 

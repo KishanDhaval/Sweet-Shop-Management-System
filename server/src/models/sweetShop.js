@@ -38,6 +38,22 @@ class SweetShop {
   viewSweets() {
     return [...this.sweets];
   }
+
+  deleteSweet(id) {
+    const idx = this.sweets.findIndex((s) => s.id === id);
+    if (idx === -1) throw new Error(`Sweet with ID ${id} not found`);
+    return this.sweets.splice(idx, 1)[0];
+  }
+  
+  deleteSweetsByCategory(category) {
+    const matchedSweets = this.sweets.filter(s => s.category === category);
+    if (matchedSweets.length === 0) {
+      throw new Error(`No sweets found in category ${category}`);
+    }
+
+    this.sweets = this.sweets.filter(s => s.category !== category);
+    return matchedSweets; 
+  }
 }
 
 module.exports = SweetShop;
