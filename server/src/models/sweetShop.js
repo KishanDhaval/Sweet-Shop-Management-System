@@ -70,6 +70,21 @@ class SweetShop {
   searchByPriceRange(min, max) {
     return this.sweets.filter(s => s.price >= min && s.price <= max);
   }
+
+  purchaseSweet(id, qty) {
+    const sweet = this.sweets.find(s => s.id === id);
+    if (!sweet) throw new Error(`Sweet with ID ${id} not found`);
+    if (qty > sweet.quantity) throw new Error(`Insufficient stock for ID ${id}`);
+    sweet.quantity -= qty;
+    return sweet;
+  }
+
+  restockSweet(id, qty) {
+    const sweet = this.sweets.find(s => s.id === id);
+    if (!sweet) throw new Error(`Sweet with ID ${id} not found`);
+    sweet.quantity += qty;
+    return sweet;
+  }
 }
 
 module.exports = SweetShop;
