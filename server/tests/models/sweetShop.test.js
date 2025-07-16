@@ -99,3 +99,63 @@ describe("Model: SweetShop, Sweet add", () => {
     ).toThrow("id must be an Integer");
   });
 });
+
+describe("Model: SweetShop, Sweet delete", () => {
+  let shop;
+
+  beforeEach(() => {
+    shop = new SweetShop();
+
+    shop.addSweet({
+      id: 1,
+      name: "Ladoo",
+      category: "Indian",
+      price: 20,
+      quantity: 10,
+    });
+    shop.addSweet({
+      id: 2,
+      name: "Chocolate",
+      category: "Chocolate",
+      price: 50,
+      quantity: 5,
+    });
+    shop.addSweet({
+      id: 3,
+      name: "Gulab Jamun",
+      category: "Milk-Based",
+      price: 10,
+      quantity: 50,
+    });
+    shop.addSweet({
+      id: 4,
+      name: "Barfi",
+      category: "Indian",
+      price: 15,
+      quantity: 12,
+    });
+  });
+
+  it("deleteSweetsByCategory: removes sweets of the given category", () => {
+    const removedSweets = shop.deleteSweetsByCategory("Indian");
+
+    expect(removedSweets).toHaveLength(2);
+  });
+
+  it("deleteSweetsByCategory: throws if category not found", () => {
+    expect(() => shop.deleteSweetsByCategory("Kaju-Based")).toThrow(
+      "No sweets found in category Kaju-Based"
+    );
+  });
+
+  it("deleteSweet: removes and returns the sweet by id", () => {
+    const removed = shop.deleteSweet(2);
+    expect(removed).toMatchObject({ id: 2 });
+    expect(shop.viewSweets()).toHaveLength(3);
+    expect(shop.viewSweets().find((s) => s.id === 2)).toBeUndefined();
+  });
+
+  it("deleteSweet: throws if id not found", () => {
+    expect(() => shop.deleteSweet(999)).toThrow("Sweet with ID 999 not found");
+  });
+});
