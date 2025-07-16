@@ -1,5 +1,6 @@
+const SweetShop = require("../../src/models/sweetShop");
 
-describe("Model: SweetShop", () => {
+describe("Model: SweetShop, Sweet add", () => {
   let shop;
 
   beforeEach(() => {
@@ -59,7 +60,7 @@ describe("Model: SweetShop", () => {
         price: -5,
         quantity: 1,
       })
-    ).toThrow("Price should be positive");
+    ).toThrow("Price must be a positive");
   });
 
   it("throws if quantity is negative", () => {
