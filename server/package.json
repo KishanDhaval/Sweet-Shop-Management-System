@@ -1,0 +1,19 @@
+{
+  "name": "sweet-shop-express",
+  "version": "1.0.0",
+  "description": "Sweet Shop API with Express and TDD",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --coverage --runInBand"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^6.3.3"
+  }
+}
