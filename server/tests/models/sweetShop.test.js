@@ -101,8 +101,8 @@ describe("Model: SweetShop, Sweet add", () => {
   });
 });
 
-// Test cases for delete function
-describe("Model: SweetShop, Sweet delete", () => {
+// Test cases for delete and search function
+describe("Model: SweetShop, Sweet delete & search", () => {
   let shop;
 
   beforeEach(() => {
@@ -159,5 +159,38 @@ describe("Model: SweetShop, Sweet delete", () => {
 
   it("deleteSweet: throws if id not found", () => {
     expect(() => shop.deleteSweet(999)).toThrow("Sweet with ID 999 not found");
+  });
+
+  it("searchByName: finds sweets", () => {
+    const res1 = shop.searchByName("lado");
+    expect(res1).toHaveLength(1);
+    expect(res1[0].name).toBe("Ladoo");
+
+    const res2 = shop.searchByName("JAmun");
+    expect(res2).toHaveLength(1);
+    expect(res2[0].name).toBe("Gulab Jamun");
+  });
+
+  it("searchByName: returns empty array if no match", () => {
+    expect(shop.searchByName("xyz")).toEqual([]);
+  });
+
+  it("searchByCategory: exact match, case‑insensitive", () => {
+    const res = shop.searchByCategory("milk-based");
+    expect(res).toHaveLength(1);
+    expect(res[0].category).toBe("Milk-Based");
+  });
+
+  it("searchByCategory: returns empty if none", () => {
+    expect(shop.searchByCategory("fruit")).toEqual([]);
+  });
+
+  it("searchByPriceRange: includes sweets within [min, max]", () => {
+    const res = shop.searchByPriceRange(10, 20);
+    expect(res.map((s) => s.price).sort()).toEqual([10, 15, 20]);
+  });
+
+  it("searchByPriceRange: handles no matches", () => {
+    expect(shop.searchByPriceRange(100, 200)).toEqual([]);
   });
 });
