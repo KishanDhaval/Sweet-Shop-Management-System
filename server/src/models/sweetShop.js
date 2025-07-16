@@ -1,6 +1,8 @@
+const { v4: uuidv4 } = require('uuid');
+
 class Sweet {
   constructor({ id, name, category, price, quantity }) {
-    if (!id || !name || !category || price == null || quantity == null) {
+    if (!name || !category || price == null || quantity == null) {
       throw new Error('All fields are required');
     }
     if(price < 0){
@@ -9,10 +11,6 @@ class Sweet {
     if (!Number.isInteger(quantity) || quantity < 0) {
         throw new Error("Quantity must be a positive integer");
     }
-    if(!Number.isInteger(id)){
-        throw new Error("id must be an Integer");
-    }
-
     this.id = id;
     this.name = name;
     this.category = category;
@@ -27,10 +25,8 @@ class SweetShop {
   }
 
   addSweet(data) {
-    if (this.sweets.some(s => s.id === data.id)) {
-      throw new Error(`Sweet with ID ${data.id} already exists`);
-    }
-    const sweet = new Sweet(data);
+    const sweetData = { ...data, id: uuidv4() };
+    const sweet = new Sweet(sweetData);
     this.sweets.push(sweet);
     return sweet;
   }

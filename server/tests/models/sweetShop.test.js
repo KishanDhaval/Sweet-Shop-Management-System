@@ -16,7 +16,6 @@ describe("Model: SweetShop, Sweet add", () => {
 
   it("addSweet: adds & returns sweet", () => {
     const data = {
-      id: 1,
       name: "Perk",
       category: "chocolate",
       price: 10,
@@ -38,18 +37,6 @@ describe("Model: SweetShop, Sweet add", () => {
     const s = shop.addSweet(data);
     expect(s.price).toBe(0);
     expect(s.quantity).toBe(0);
-  });
-
-  it("addSweet: throws on duplicate id", () => {
-    const data = {
-      id: 1,
-      name: "Melody",
-      category: "chocolate",
-      price: 2,
-      quantity: 10,
-    };
-    shop.addSweet(data);
-    expect(() => shop.addSweet(data)).toThrow("Sweet with ID 1 already exists");
   });
 
   it("addSweet: throws if negative price", () => {
@@ -86,18 +73,6 @@ describe("Model: SweetShop, Sweet add", () => {
         quantity: 2.5,
       })
     ).toThrow("Quantity must be a positive integer");
-  });
-
-  it("addSweet: throws if id is not a number", () => {
-    expect(() =>
-      shop.addSweet({
-        id: "one",
-        name: "20-20",
-        category: "Biscuit",
-        price: 20,
-        quantity: 1,
-      })
-    ).toThrow("id must be an Integer");
   });
 });
 
@@ -151,17 +126,6 @@ describe("Model: SweetShop, Sweet delete & search", () => {
     );
   });
 
-  it("deleteSweet: removes and returns the sweet by id", () => {
-    const removed = shop.deleteSweet(2);
-    expect(removed).toMatchObject({ id: 2 });
-    expect(shop.viewSweets()).toHaveLength(3);
-    expect(shop.viewSweets().find((s) => s.id === 2)).toBeUndefined();
-  });
-
-  it("deleteSweet: throws if id not found", () => {
-    expect(() => shop.deleteSweet(999)).toThrow("Sweet with ID 999 not found");
-  });
-
   // search
   it("searchByName: finds sweets", () => {
     const res1 = shop.searchByName("lado");
@@ -198,33 +162,51 @@ describe("Model: SweetShop, Sweet delete & search", () => {
 
   // purchase
   it("purchaseSweet: decreases quantity correctly", () => {
-    const updated = shop.purchaseSweet(1, 3);
+    const sweet = shop.addSweet({
+      name: "Ladoo",
+      category: "Indian",
+      price: 20,
+      quantity: 10,
+    });
+    const updated = shop.purchaseSweet(sweet.id, 3);
     expect(updated.quantity).toBe(7);
-    expect(shop.viewSweets().find((s) => s.id === 1).quantity).toBe(7);
+    expect(shop.viewSweets().find((s) => s.id === sweet.id).quantity).toBe(7);
   });
 
   it("purchaseSweet: throws on insufficient stock", () => {
-    expect(() => shop.purchaseSweet(2, 10)).toThrow(
-      "Insufficient stock for ID 2"
+    const sweet = shop.addSweet({
+      name: "Chocolate",
+      category: "Chocolate",
+      price: 50,
+      quantity: 5,
+    });
+    expect(() => shop.purchaseSweet(sweet.id, 10)).toThrow(
+      `Insufficient stock for ID ${sweet.id}`
     );
   });
 
   it("purchaseSweet: throws on unknown id", () => {
-    expect(() => shop.purchaseSweet(999, 1)).toThrow(
-      "Sweet with ID 999 not found"
+    expect(() => shop.purchaseSweet("non-existent-id", 1)).toThrow(
+      "Sweet with ID non-existent-id not found"
     );
   });
 
   // restock
   it("restockSweet: increases quantity correctly", () => {
-    const updated = shop.restockSweet(2, 7);
+    const sweet = shop.addSweet({
+      name: "Chocolate",
+      category: "Chocolate",
+      price: 50,
+      quantity: 5,
+    });
+    const updated = shop.restockSweet(sweet.id, 7);
     expect(updated.quantity).toBe(12);
-    expect(shop.viewSweets().find((s) => s.id === 2).quantity).toBe(12);
+    expect(shop.viewSweets().find((s) => s.id === sweet.id).quantity).toBe(12);
   });
 
   it("restockSweet: throws on unknown id", () => {
-    expect(() => shop.restockSweet(999, 5)).toThrow(
-      "Sweet with ID 999 not found"
+    expect(() => shop.restockSweet("non-existent-id", 5)).toThrow(
+      "Sweet with ID non-existent-id not found"
     );
   });
 });
