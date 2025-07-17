@@ -144,6 +144,32 @@ class SweetShop {
     sweet.quantity += qty;
     return sweet;
   }
+
+  updateSweet(id, data) {
+    const sweet = this.sweets.find(s => s.id === id);
+    if (!sweet) {
+      throw new Error(`Sweet with ID ${id} not found`);
+    }
+
+    if (data.name != null) {
+      sweet.name = data.name;
+    }
+    if (data.category != null) {
+      sweet.category = data.category;
+    }
+    if (data.price != null) {
+      if (data.price < 0) throw new Error("Price must be a positive");
+      sweet.price = data.price;
+    }
+    if (data.quantity != null) {
+      if (!Number.isInteger(data.quantity) || data.quantity < 0) {
+        throw new Error("Quantity must be a positive integer");
+      }
+      sweet.quantity = data.quantity;
+    }
+
+    return sweet;
+  }
 }
 
 module.exports = SweetShop;

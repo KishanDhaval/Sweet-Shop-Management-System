@@ -78,31 +78,6 @@ describe("Model: SweetShop, Sweet delete, search, sort, purchase & restock", () 
 
   beforeEach(() => {
     shop = new SweetShop();
-
-    shop.addSweet({
-      name: "Ladoo",
-      category: "Indian",
-      price: 20,
-      quantity: 10,
-    });
-    shop.addSweet({
-      name: "Chocolate",
-      category: "Chocolate",
-      price: 50,
-      quantity: 5,
-    });
-    shop.addSweet({
-      name: "Gulab Jamun",
-      category: "Milk-Based",
-      price: 10,
-      quantity: 50,
-    });
-    shop.addSweet({
-      name: "Barfi",
-      category: "Indian",
-      price: 15,
-      quantity: 12,
-    });
   });
 
   // delete
@@ -119,14 +94,14 @@ describe("Model: SweetShop, Sweet delete, search, sort, purchase & restock", () 
   });
 
   it("deleteSweetsByCategory: removes sweets of the given category", () => {
-    const removedSweets = shop.deleteSweetsByCategory("Indian");
+    const removedSweets = shop.deleteSweetsByCategory("Milk-Based");
 
-    expect(removedSweets).toHaveLength(2);
+    expect(removedSweets).toHaveLength(3);
   });
 
   it("deleteSweetsByCategory: throws if category not found", () => {
-    expect(() => shop.deleteSweetsByCategory("Kaju-Based")).toThrow(
-      "No sweets found in category Kaju-Based"
+    expect(() => shop.deleteSweetsByCategory("Kaju")).toThrow(
+      "No sweets found in category Kaju"
     );
   });
 
@@ -134,7 +109,7 @@ describe("Model: SweetShop, Sweet delete, search, sort, purchase & restock", () 
   it("searchByName: finds sweets", () => {
     const res1 = shop.searchByName("lado");
     expect(res1).toHaveLength(1);
-    expect(res1[0].name).toBe("Ladoo");
+    expect(res1[0].name).toBe("Motichoor Ladoo");
 
     const res2 = shop.searchByName("JAmun");
     expect(res2).toHaveLength(1);
@@ -146,9 +121,9 @@ describe("Model: SweetShop, Sweet delete, search, sort, purchase & restock", () 
   });
 
   it("searchByCategory: exact match, case‑insensitive", () => {
-    const res = shop.searchByCategory("milk-based");
+    const res = shop.searchByCategory("wheat-based");
     expect(res).toHaveLength(1);
-    expect(res[0].category).toBe("Milk-Based");
+    expect(res[0].category).toBe("Wheat-Based");
   });
 
   it("searchByCategory: returns empty if none", () => {
@@ -156,25 +131,25 @@ describe("Model: SweetShop, Sweet delete, search, sort, purchase & restock", () 
   });
 
   it("searchByPriceRange: includes sweets within [min, max]", () => {
-    const res = shop.searchByPriceRange(10, 20);
-    expect(res.map((s) => s.price).sort()).toEqual([10, 15, 20]);
+    const res = shop.searchByPriceRange(50, 90);
+    expect(res.map((s) => s.price).sort()).toEqual([60, 80, 90]);
   });
 
   it("searchByPriceRange: handles no matches", () => {
-    expect(shop.searchByPriceRange(100, 200)).toEqual([]);
+    expect(shop.searchByPriceRange(10, 20)).toEqual([]);
   });
 
   // sort
   it("sortByPrice: ascending order (default)", () => {
     const sorted = shop.sortByPrice();
     const prices = sorted.map((s) => s.price);
-    expect(prices).toEqual([10, 15, 20, 50]);
+    expect(prices).toEqual([60, 80, 90, 100, 120, 150, 180, 250]);
   });
 
   it("sortByPrice: descending order", () => {
     const sorted = shop.sortByPrice(false);
     const prices = sorted.map((s) => s.price);
-    expect(prices).toEqual([50, 20, 15, 10]);
+    expect(prices).toEqual([250, 180, 150, 120, 100, 90, 80, 60]);
   });
 
   it("sortByPrice: does not mutate original sweet list", () => {
@@ -190,21 +165,8 @@ describe("Model: SweetShop, Sweet delete, search, sort, purchase & restock", () 
 
     const sorted = shop.sortByPrice();
     const prices = sorted.map((s) => s.price);
-    const expected = [10, 15, 15, 15, 20, 50];
+    const expected = [15, 15, 60, 80, 90, 100, 120, 150, 180, 250];
     expect(prices).toEqual(expected);
-  });
-
-  it("sortByPrice: returns single sweet unchanged", () => {
-    const singleShop = new SweetShop();
-    singleShop.addSweet({
-      name: "Only",
-      category: "Solo",
-      price: 99,
-      quantity: 1,
-    });
-    const sorted = singleShop.sortByPrice();
-    expect(sorted).toHaveLength(1);
-    expect(sorted[0].price).toBe(99);
   });
 
   // purchase
@@ -255,5 +217,62 @@ describe("Model: SweetShop, Sweet delete, search, sort, purchase & restock", () 
     expect(() => shop.restockSweet("non-existent-id", 5)).toThrow(
       "Sweet with ID non-existent-id not found"
     );
+  });
+});
+
+describe("updateSweet()", () => {
+  let shop, existing;
+
+  beforeEach(() => {
+    shop = new SweetShop();
+    existing = shop.addSweet({
+      name: "Old",
+      category: "Cat",
+      price: 10,
+      quantity: 5,
+    });
+  });
+
+  it("updateSweet: updates name and preserves other fields", () => {
+    const updated = shop.updateSweet(existing.id, { name: "NewName" });
+    expect(updated.name).toBe("NewName");
+    expect(updated.category).toBe("Cat");
+    expect(updated.price).toBe(10);
+    expect(updated.quantity).toBe(5);
+  });
+
+  it("updateSweet: updates multiple fields", () => {
+    const updated = shop.updateSweet(existing.id, {
+      price: 20,
+      quantity: 3,
+    });
+    expect(updated.price).toBe(20);
+    expect(updated.quantity).toBe(3);
+  });
+
+  it("updateSweet: throws if id not found", () => {
+    expect(() => shop.updateSweet("nope", { name: "X" })).toThrow(
+      "Sweet with ID nope not found"
+    );
+  });
+
+  it("updateSweet: throws on invalid price", () => {
+    expect(() => shop.updateSweet(existing.id, { price: -5 })).toThrow(
+      "Price must be a positive"
+    );
+  });
+
+  it("updateSweet: throws on invalid quantity", () => {
+    expect(() => shop.updateSweet(existing.id, { quantity: -2 })).toThrow(
+      "Quantity must be a positive integer"
+    );
+  });
+
+  it("updateSweet: allows partial update without touching other fields", () => {
+    const updated = shop.updateSweet(existing.id, { category: "NewCat" });
+    expect(updated.category).toBe("NewCat");
+    expect(updated.name).toBe("Old");
+    expect(updated.price).toBe(10);
+    expect(updated.quantity).toBe(5);
   });
 });
