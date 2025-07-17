@@ -66,6 +66,12 @@ class SweetShop {
   searchByPriceRange(min, max) {
     return this.sweets.filter(s => s.price >= min && s.price <= max);
   }
+  
+  sortByPrice(asc = true) {
+    return [...this.sweets].sort((a, b) =>
+      asc ? a.price - b.price : b.price - a.price
+    );
+  }
 
   purchaseSweet(id, qty) {
     const sweet = this.sweets.find(s => s.id === id);
