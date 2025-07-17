@@ -48,6 +48,16 @@ module.exports = {
     res.json(shop.searchByPriceRange(min, max));
   },
 
+   sortSweets: (req, res) => {
+    try {
+      const asc = req.query.asc !== 'false';
+      const sorted = shop.sortByPrice(asc);
+      return res.json(sorted);
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  },
+
   purchaseSweet: (req, res) => {
     try {
       const sweet = shop.purchaseSweet(req.params.id, Number(req.body.qty));
