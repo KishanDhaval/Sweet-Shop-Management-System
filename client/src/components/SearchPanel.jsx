@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
-const SearchPanel = ({ onSearch, onClear, isSearching, availableCategories = [] }) => {
+const SearchPanel = ({ onSearch, onClear, isSearching, onSort, onClearSort, sortOrder, availableCategories = [] }) => {
   const [searchType, setSearchType] = useState('name');
   const [searchValue, setSearchValue] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
@@ -24,17 +24,55 @@ const SearchPanel = ({ onSearch, onClear, isSearching, availableCategories = [] 
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Search Sweets</h2>
-        {isSearching && (
-          <button
-            onClick={handleClear}
-            className="text-gray-500 hover:text-gray-700 flex items-center space-x-2 transition-colors"
-          >
-            <X className="h-4 w-4" />
-            <span>Clear</span>
-          </button>
-        )}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
+        <h2 className="text-lg font-semibold text-gray-900">Search & Sort Sweets</h2>
+        <div className="flex items-center space-x-2">
+          {/* Sort Controls */}
+          <div className="flex items-center space-x-1 border-r border-gray-300 pr-3">
+            <button
+              onClick={() => onSort(true)}
+              className={`p-2 rounded-lg transition-colors ${
+                sortOrder === 'asc' 
+                  ? 'bg-indigo-100 text-indigo-600' 
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+              }`}
+              title="Sort by price ascending"
+            >
+              <ArrowUp className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => onSort(false)}
+              className={`p-2 rounded-lg transition-colors ${
+                sortOrder === 'desc' 
+                  ? 'bg-indigo-100 text-indigo-600' 
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+              }`}
+              title="Sort by price descending"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </button>
+            {sortOrder && (
+              <button
+                onClick={onClearSort}
+                className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                title="Clear sort"
+              >
+                <ArrowUpDown className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          
+          {/* Clear Search */}
+          {isSearching && (
+            <button
+              onClick={handleClear}
+              className="text-gray-500 hover:text-gray-700 flex items-center space-x-2 transition-colors"
+            >
+              <X className="h-4 w-4" />
+              <span className="hidden sm:inline">Clear Search</span>
+            </button>
+          )}
+        </div>
       </div>
 
       <form onSubmit={handleSearch} className="space-y-4">

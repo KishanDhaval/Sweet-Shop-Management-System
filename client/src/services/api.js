@@ -60,6 +60,13 @@ export const api = {
     return response.json();
   },
 
+  // Sort sweets by price
+  sortSweets: async (ascending = true) => {
+    const response = await fetch(`${API_BASE_URL}/sweets/sort?asc=${ascending}`);
+    if (!response.ok) throw new Error('Failed to sort sweets');
+    return response.json();
+  },
+
   // Purchase sweet
   purchaseSweet: async (id, quantity) => {
     const response = await fetch(`${API_BASE_URL}/sweets/${id}/purchase`, {

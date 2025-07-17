@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, ShoppingCart, Package, Trash2, Edit } from 'lucide-react';
+import { Plus, Search, ShoppingCart, Package, Trash2, Edit, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { api } from '../services/api';
 import AddSweetForm from './AddSweetForm';
 import SweetCard from './SweetCard';
@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [sortOrder, setSortOrder] = useState(null); // null, 'asc', 'desc'
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState({ message: '', type: '' });
 
@@ -132,6 +133,27 @@ const Dashboard = () => {
     }
   };
 
+  const handleSort = async (ascending) => {
+    try {
+      setLoading(true);
+      const sortedData = await api.sortSweets(ascending);
+      setSweets(sortedData);
+      setFilteredSweets(sortedData);
+      setSortOrder(ascending ? 'asc' : 'desc');
+      setIsSearching(false); // Clear search when sorting
+      showNotification(`Sorted by price ${ascending ? 'ascending' : 'descending'}`, 'success');
+    } catch (error) {
+      showNotification('Failed to sort sweets: ' + error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearSort = async () => {
+    setSortOrder(null);
+    await loadSweets(); // Reload original data
+  };
+
   const clearSearch = () => {
     setIsSearching(false);
     setSearchResults([]);
@@ -176,6 +198,9 @@ const Dashboard = () => {
           onSearch={handleSearch} 
           onClear={clearSearch} 
           isSearching={isSearching}
+          onSort={handleSort}
+          onClearSort={clearSort}
+          sortOrder={sortOrder}
           availableCategories={[...new Set(sweets.map(sweet => sweet.category))]}
         />
 

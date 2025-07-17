@@ -9,6 +9,7 @@ const {
   searchByPriceRange,
   purchaseSweet,
   restockSweet,
+  sortSweets,
 } = require("../controllers/sweetController");
 
 const router = express.Router();
@@ -19,20 +20,17 @@ router.post("/", addSweet);
 // View all sweets
 router.get("/", viewSweets);
 
-// Delete sweet by id
+// Delete 
 router.delete("/:id", deleteSweet);
-
-// Delete sweets by category
 router.delete("/category/:category", deleteSweetsByCategory);
 
 // Search by name
 router.get("/search/name", searchByName);
-
-// Search by category
 router.get("/search/category", searchByCategory);
-
-// Search by price range
 router.get("/search/price", searchByPriceRange);
+
+// Sort 
+router.get("/sort", sortSweets)
 
 // Purchase sweet
 router.post("/:id/purchase", purchaseSweet);
